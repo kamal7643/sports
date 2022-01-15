@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        Cricket News
+    </title>
+    <style>
+        .box{
+            border: 1px solid grey;
+            box-shadow: 0px 0px 10px grey;
+            padding:10px;
+            margin-bottom:30px;
+        }
+        .root{
+            width: 100%;
+            text-align: center;
+        }
+        .position{
+            margin: 0;
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 0%);
+        }
+        
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="root">
+        News
+        <!-- <div class="position">
+            <button onclick="decr()">back</button>
+            <input id="page" value=2 width="20px"/>
+            <button onclick="incr()">next</button>
+        </div> -->
+    </div>
+</body>
+<script>
+    var page = document.getElementById("page");
+    function incr(){
+        var n =parseInt(page.value)+1;
+        window.location.reload();
+        page.value=n;
+    }
+    function decr(){
+        page.value=parseInt(page.value)-1;
+    }
+    fetch("https://livescore6.p.rapidapi.com/news/v2/list-by-sport?category=2021020913321411486&page=1", {
+        "method": "GET",
+        "headers": {
+            "x-rapidapi-host": "livescore6.p.rapidapi.com",
+            "x-rapidapi-key": "0a43f81b14msh8d769c5f4b29ff0p1c408djsn1a519783a90c"
+        }
+    })
+        .then(response => {
+            response.json().then((data)=>{
+                data.data.forEach((ele)=>{
+                    var para = document.createElement("div");  
+                    para.className="box"             // Create a <p> element
+                    para.innerText = ele.id;               // Insert text
+                    var title = document.createElement("h2");
+                    title.className="title";
+                    title.innerText=ele.title;
+                    para.appendChild(title);
+                    var subtitle = document.createElement("h3");
+                    subtitle.className="subtitle";
+                    subtitle.innerText=ele.subtitle;
+                    para.appendChild(subtitle);
+                    // var image = document.createElement("img");
+                    // image.className="view";
+                    // image.src=ele.image.data.path;
+                    // para.appendChild(image);
+                    var body = document.createElement("div");
+                    body.className="body";
+                    ele.body.forEach((b)=>{
+                        var pp = document.createElement('p');
+                        pp.className="paragraph";
+                        pp.innerHTML=b.data.content;
+                        body.appendChild(pp);
+                    })
+                    para.appendChild(body);
+                    var views = document.createElement("span");
+                    var eye = document.createElement("i");
+                    eye.className="fa fa-eye";
+                    eye.innerText="i"
+                    views.appendChild(eye);
+                    views.innerText = ele.view_counter;
+                    para.appendChild(views);
+                    document.body.appendChild(para);  
+                })
+            })
+        })
+        .catch(err => {
+            console.error(err);
+        });
+</script>
+
+</html>
