@@ -7,10 +7,16 @@
     </head>
     <body>
         <ul>
-            <li>/news</li>
+            <li onclick="gotonews()">/news</li>
+            <li onclick="gotolive()">/live</li>
         </ul>
     </body>
     <script>
-
+        function gotoLive(e){
+            window.location.href = "https://kamal7643.github.io/sports/live";
+        }
+        function gotoNews(){
+            window.location.href = "https://kamal7643.github.io/sports/news";
+        }
     </script>
 </html>
