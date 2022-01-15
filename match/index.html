@@ -56,7 +56,7 @@
             if (parseInt(Prns[p].Pid)===parseInt(pid))return Prns[p].Fn+" "+Prns[p].Ln;
         }
     }
-    fetch("https://livescore6.p.rapidapi.com/matches/v2/detail?Eid=563770&Category=cricket&LiveTable=true", {
+    fetch("https://livescore6.p.rapidapi.com/matches/v2/detail?Eid="+id+"&Category=cricket&LiveTable=true", {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "livescore6.p.rapidapi.com",
