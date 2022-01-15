@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Match data</title>
+    <style>
+        .teamhead {
+            margin-top: 30px;
+            position: relative;
+            top: 0%;
+            left: 50%;
+            transform: translate(-50%, 0%);
+            display: flex;
+            flex-direction: row;
+            text-align: center;
+        }
+
+        .vs {
+            margin-left: 20px;
+            margin-right: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        label{
+            font-size: 11px;
+            max-width: 400px;
+        }
+
+        .inning {
+            text-align: center;
+            width: 100%;
+            border: 1px solid grey;
+            margin-bottom: 10px;
+        }
+
+        tr{
+            border:1px solid grey;
+        }
+        table{
+            width: 100%;
+        }
+        .comment{
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+</body>
+<script>
+    var id = new URLSearchParams(window.location.search).get("id");
+    var Prns;
+    function getName(pid){
+        for(p in Prns){
+            if (parseInt(Prns[p].Pid)===parseInt(pid))return Prns[p].Fn+" "+Prns[p].Ln;
+        }
+    }
+    fetch("https://livescore6.p.rapidapi.com/matches/v2/detail?Eid=563770&Category=cricket&LiveTable=true", {
+        "method": "GET",
+        "headers": {
+            "x-rapidapi-host": "livescore6.p.rapidapi.com",
+            "x-rapidapi-key": "0a43f81b14msh8d769c5f4b29ff0p1c408djsn1a519783a90c"
+        }
+    })
+
+        .then(response => {
+            response.json().then((data) => {
+                Prns=data.Prns;
+                var teamhead = document.createElement("div");
+                teamhead.className = "teamhead";
+                var team1 = document.createElement("div");
+                team1.innerText = data.T1[0].Nm + "\n" + data.Tr1C1 + "/" + data.Tr1CW1 + "(" + data.Tr1CO1 + ")";
+            
+                teamhead.appendChild(team1);
+
+                var vs = document.createElement("div");
+                vs.className = "vs"
+                var p1 = document.createElement("p");
+                p1.innerText = "vs";
+                var p2 = document.createElement("p");
+                p2.innerText = data.ECo;
+                vs.appendChild(p1);
+                vs.appendChild(p2);
+                teamhead.appendChild(vs);
+
+                var team2 = document.createElement("div");
+                team2.innerText = data.T2[0].Nm + "\n" + data.Tr2C1 + "/" + data.Tr2CW1 + "(" + data.Tr2CO1 + ")";
+
+                teamhead.appendChild(team2);
+
+                document.body.appendChild(teamhead);
+
+                // innings
+                data.SDInn.forEach(inning => {
+                    console.log(inning)
+                    var box = document.createElement("div");
+                    box.className = "inning";
+                    var p = document.createElement("p");
+                    p.innerText = inning.Ti + "\n" + inning.Pt + "/" + inning.Wk + "(" + inning.Ov + ")";
+                    box.appendChild(p);
+
+                    p = document.createElement("p");
+                    p.innerText = "batting";
+                    box.appendChild(p);
+
+                    var table = document.createElement('table');
+                    var thead = document.createElement("thead");
+                    var tr = document.createElement("tr");
+                    var th = document.createElement("th");
+                    th.innerText = "Name";
+                    tr.appendChild(th);
+                    th = document.createElement("th");
+                    th.innerText = "R";
+                    tr.appendChild(th);
+                    th = document.createElement("th");
+                    th.innerText = "B";
+                    tr.appendChild(th);
+                    th = document.createElement("th");
+                    th.innerText = "4";
+                    tr.appendChild(th);
+                    th = document.createElement("th");
+                    th.innerText = "6";
+                    tr.appendChild(th);
+                    th = document.createElement("th");
+                    th.innerText = "S/R";
+                    tr.appendChild(th);
+
+                    thead.appendChild(tr);
+                    table.appendChild(thead);
+
+                    var tbody = document.createElement('tbody');
+                    inning.Bat.forEach((bat) => {
+                        tr = document.createElement("tr");
+                        var td = document.createElement("td");
+                        td.innerText = getName(bat.Pid)+"\n"+bat.LpTx;
+                        tr.appendChild(td);
+                        td = document.createElement("td");
+                        td.innerText = bat.R;
+                        tr.appendChild(td);
+                        td = document.createElement("td");
+                        td.innerText = bat.B;
+                        tr.appendChild(td);
+                        td = document.createElement("td");
+                        td.innerText = bat.$4;
+                        tr.appendChild(td);
+                        td = document.createElement("td");
+                        td.innerText = bat.$6;
+                        tr.appendChild(td);
+                        td = document.createElement("td");
+                        td.innerText = bat.Sr;
+                        tr.appendChild(td);
+                        if(bat.R || bat.R===0)tbody.appendChild(tr);
+
+                    })
+                    table.appendChild(tbody);
+
+
+
+                    box.appendChild(table);
+                    // fall of wickets
+                    p = document.createElement("p");
+                    p.innerText = "Fall of Wickets";
+                    box.appendChild(p);
+
+                    var fw = document.createElement("label");
+                    t =""
+                    inning.FoW.reverse().forEach((w)=>{
+                        t+=w.R+"/"+w.WkN+"("+getName(w.Pid)+")  "
+                    })
+                    fw.innerText=t;
+                    box.appendChild(fw);
+
+                    // bowling 
+                    p = document.createElement("p");
+                    p.innerText = "bowling";
+                    box.appendChild(p);
+
+
+
+
+
+
+
+                    var table = document.createElement('table');
+                    var thead = document.createElement("thead");
+                    var tr = document.createElement("tr");
+                    var th = document.createElement("th");
+                    th.innerText = "Name";
+                    tr.appendChild(th);
+                    th = document.createElement("th");
+                    th.innerText = "O";
+                    tr.appendChild(th);
+                    th = document.createElement("th");
+                    th.innerText = "M";
+                    tr.appendChild(th);
+                    th = document.createElement("th");
+                    th.innerText = "R";
+                    tr.appendChild(th);
+                    th = document.createElement("th");
+                    th.innerText = "W";
+                    tr.appendChild(th);
+                    th = document.createElement("th");
+                    th.innerText = "Econ";
+                    tr.appendChild(th);
+
+                    thead.appendChild(tr);
+                    table.appendChild(thead);
+
+                    var tbody = document.createElement('tbody');
+                    inning.Bow.forEach((bow) => {
+                        tr = document.createElement("tr");
+                        var td = document.createElement("td");
+                        td.innerText = getName(bow.Pid);
+                        tr.appendChild(td);
+                        td = document.createElement("td");
+                        td.innerText = bow.Ov;
+                        tr.appendChild(td);
+                        td = document.createElement("td");
+                        td.innerText = bow.Md;
+                        tr.appendChild(td);
+                        td = document.createElement("td");
+                        td.innerText = bow.R;
+                        tr.appendChild(td);
+                        td = document.createElement("td");
+                        td.innerText = bow.Wk;
+                        tr.appendChild(td);
+                        td = document.createElement("td");
+                        td.innerText = bow.Er;
+                        tr.appendChild(td);
+                        if(bow.R || bow.R===0)tbody.appendChild(tr);
+
+                    })
+                    table.appendChild(tbody);
+
+
+
+                    box.appendChild(table);
+
+
+
+
+
+
+
+                    p = document.createElement("p");
+                    p.innerText = "comments";
+                    box.appendChild(p);
+
+                    i =0;
+                    cmm = document.createElement("div")
+                    cmm.className="comment";
+                    for(i; i<5; i++){
+                        cm = document.createElement("div");
+                        cm.innerText=inning.Com[i].T;
+                        cmm.appendChild(cm);
+                    }
+                    box.appendChild(cmm);
+
+                    document.body.appendChild(box);
+
+                });
+
+                //comments
+
+            })
+        })
+        .catch(err => {
+            console.error(err);
+        });
+</script>
+
+</html>

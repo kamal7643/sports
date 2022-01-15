@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        Cricket Live
+    </title>
+</head>
+
+<body>
+
+</body>
+<script>
+    function gotoMatch(e){
+        console.log(e);
+        window.location.href = "https://kamal7643.github.io/sports/match?id="+e;
+    }
+    fetch("https://livescore6.p.rapidapi.com/matches/v2/list-live?Category=cricket", {
+        "method": "GET",
+        "headers": {
+            "x-rapidapi-host": "livescore6.p.rapidapi.com",
+            "x-rapidapi-key": "0a43f81b14msh8d769c5f4b29ff0p1c408djsn1a519783a90c"
+        }
+    })
+        .then(response => {
+            response.json().then((data)=>{
+                data.Stages.forEach((Stage)=>{
+
+                    //stage
+                    var stage = document.createElement("div");
+                    Stage.Events.forEach((Event)=>{
+
+                        //event
+                        var event = document.createElement("div");
+                        event.onclick=()=>{
+                            gotoMatch(Event.Eid);
+                        }
+                        console.log(Event);
+
+                        //status 
+                        var status = document.createElement("p");
+                        var t = Event.EtTx+"\n"+Event.EpsL;
+                        if(Event.ErnInf){
+                            t+="\n"+Event.ErnInf;
+                        }
+                        t+="\n" +Event.T1[0].Nm+ " vs " + Event.T2[0].Nm +"\n"+Event.ECo;
+                        t+="\n"+Event.T1[0].Nm +":"+ Event.Tr1C1+"/"+Event.Tr1CW1+"("+Event.Tr1CO1+")";
+                        if(Event.Tr2C1){
+                            t+="\n"+Event.T2[0].Nm +":"+ Event.Tr2C1+"/"+Event.Tr2CW1+"("+Event.Tr2CO1+")";
+                        }
+                        else{
+                            t+="\n"+Event.T2[0].Nm+":"+" yet to play";
+                        }
+                        status.innerText = t;
+                        event.appendChild(status);
+
+                        // 
+
+                        stage.appendChild(event);
+
+                    })
+                    document.body.appendChild(stage);
+                })
+            })
+        })
+        .catch(err => {
+            console.error(err);
+        });
+</script>
+
+</html>
